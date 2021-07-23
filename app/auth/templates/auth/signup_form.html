@@ -1,0 +1,68 @@
+{% extends "base_template.html" %}
+{% block title %}Registro de usuarios{% endblock %}
+{% block content %}
+
+    {% if error %}
+        <p style="color: red;"><strong>Error:</strong> {{ error }}
+    {% endif %}
+
+    <!--
+        Para poder utilizar el validador de WTF Forms en cada instancia de Jinja 2
+        lo referenciaremos mediante las constanes de Jinja, es decir, mediane {{ nombre_objeto}}.
+        de esta forma, se renderizará el html.
+
+        Adicionalmente, para que el formulario no sea validado por la web sino que sea nuestra clase
+        quién lo hace, debermos indicar 'novalidate' en la etiqueta de la clase forms.
+    -->
+    <!--
+        Para crear un formulario ne HTML se usa la etiqueta form. El atributo action indica la URL a la que se le enviarán
+        los datos del formulario (se debe de indicar la url del asignado a un endpoint, es decir, mediante el metodo
+        url_for(endpointname, params). Si este atributo (action) está vacío, será la misma URL quien descargará el recurso.
+        El atributo method sirve para indicar el método utilizado al enviar el formulario.
+        Para procesar los campos del formulario se debe indicar el nombre con el los identificará el servidor mediante
+        el atributo name.
+    -->
+    <form action="" method="post" novalidate>
+        <!--
+            Esta línea sirve para evitar ataques CSRF. La clase Flask-WTF genera para todas las
+            instancias de la clase FlaskForm un campo oculto que contiene un token que sirve para protegerse
+            de dichos ataques.
+            Para poder generar este token es necesario definir un parámetro de configuración a nivel de aplicación
+            llamado SECRET_KEY, cuyo valor debe ser un secreto de tipo string.
+        -->
+        {{ formulario_html.hidden_tag() }}
+
+        <div>
+            <!--
+                Para procesar los campos del formulario se debe indicar el nombre con el los identificará el servidor
+                mediante el atributo name.
+            -->
+            {{ formulario_html.name.label}}
+            {{ formulario_html.name(size=64) }}<br>
+            <!--
+                tras insertar cada campo recorremos el diccionario errors para mostrar al usuario los posibles errores
+                de validación que haya en el mismo.
+             -->
+            {% for error in formulario_html.name.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ formulario_html.email.label }}
+            {{ formulario_html.email() }}<br>
+            {% for error in formulario_html.email.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ formulario_html.password.label }}
+            {{ formulario_html.password() }}<br>
+            {% for error in formulario_html.password.errors %}
+            <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+        </div>
+        <div>
+            {{ formulario_html.submit() }}
+        </div>
+    </form>
+{% endblock %}
